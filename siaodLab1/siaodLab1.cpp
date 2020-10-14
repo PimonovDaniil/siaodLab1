@@ -7,21 +7,20 @@ using namespace std;
 
 struct deystv
 {
-    char znak; //знак действия
+    char znak; //знак действия -&|
     int sym; //число (1/0/-1)
 };
 
-
-
+template<typename T>
 class Stack {
 protected:
-    deystv* m_data;
+    T* m_data;
     int size;
 
 private:
     void copy(const Stack& other) {
         this->size = other.size;
-        deystv* newStack = new deystv[this->size];
+        T* newStack = new T[this->size];
         for (int i = 0; i < this->size; i++)
             newStack[i] = other.m_data[i];
         if (this->m_data != nullptr) delete[] this->m_data;
@@ -49,8 +48,8 @@ public:
         return *this;
     }
 
-    void Push(deystv a) { //добавить элемент
-        deystv* newStack = new deystv[this->size + 1];
+    virtual void Push(T a) { //добавить элемент
+        T* newStack = new T[this->size + 1];
         if (this->m_data != nullptr) {
             for (int i = 0; i < this->size; i++)
                 newStack[i] = this->m_data[i];
@@ -61,15 +60,15 @@ public:
         this->m_data[this->size - 1] = a;
     }
 
-    deystv Pop() { //убрать элемент
+    T Pop() { //убрать элемент
         if (this->size <= 0) throw "выход за границы";
-        deystv a = m_data[this->size - 1];
+        T a = m_data[this->size - 1];
         if (this->size == 1) {
             delete[] this->m_data;
             this->m_data = nullptr;
         }
         else {
-            deystv* newStack = new deystv[this->size - 1];
+            T* newStack = new T[this->size - 1];
             for (int i = 0; i < this->size - 1; i++)
                 newStack[i] = this->m_data[i];
             delete[] this->m_data;
@@ -79,7 +78,7 @@ public:
         return a;
     }
 
-    deystv Top() { // проверить верхний элемент
+    T Top() { // проверить верхний элемент
         if (this->size <= 0) throw "выход за границы";
         return m_data[this->size - 1];
     }
@@ -89,10 +88,11 @@ public:
     }
 };
 
-class Queue : public Stack {
+template<typename T>
+class Queue : public Stack<T> {
 public:
-    void Push(deystv a) { //добавить элемент
-        deystv* newStack = new deystv[this->size + 1];
+    void Push(T a) override{ //добавить элемент
+        T* newStack = new T[this->size + 1];
         if (this->m_data != nullptr) {
             for (int i = 1; i < this->size + 1; i++)
                 newStack[i] = this->m_data[i - 1];
@@ -102,7 +102,6 @@ public:
         this->size++;
         this->m_data[0] = a;
     }
-
 };
 
 string readStr(string fileName) {
@@ -120,7 +119,7 @@ string readStr(string fileName) {
 }
 
 bool resh(string s) {
-    Stack stack;
+    Stack<deystv> stack;
     deystv d; d.sym = -1; d.znak = NULL;
     for (int i = 0; i < s.size(); i++) {
         if (s[i] == '(') {
@@ -182,18 +181,6 @@ int main()
 {
     
     string F = readStr("text.txt");
-    cout << F << endl;
-    cout << resh(F);
-    //Queue q;
-    //q.Push(1);
-    //q.Push(2);
-    //q.Push(3);
-    //q.Push(4);
-    //q.Pop();
-    //Queue z(q);
-    //z.Push(10);
-    //q.Push(11);
-    //q.print();
-    //z.print();
-    
+    cout << F << " = ";
+    cout << resh(F);    
 }
